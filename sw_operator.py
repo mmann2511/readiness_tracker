@@ -2,7 +2,7 @@ from scoring_tables import ScoringTables
 
 class Operator():
 
-    def __init__(self, name, rank, unit, flight, dnic = False, pt_clear = False, training = True):
+    def __init__(self, name, rank, unit, flight = None, dnic = False, pt_clear = False, training = True):
         self.name = name
         self.rank = rank
         self.unit = unit
@@ -102,7 +102,7 @@ class Operator():
             "taken": self.taken,
             "total_score": self.total_score,
             "test_passed": self.test_passed,
-            "last_cardio": self.last_cardio_choice,
+            "last_cardio_choice": self.last_cardio_choice,
 
             # Individual Scores
             "scores": self.scores

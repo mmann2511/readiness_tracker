@@ -1,6 +1,7 @@
-from data_manager import load_data
+from data_manager import load_data, save_data
 from unit import Unit
-from flight import flight
+from flight import Flight
+from sw_operator import Operator
 
 def main_menu(unit):
 
@@ -21,6 +22,8 @@ def main_menu(unit):
             flight_commands(unit)
         elif choice == "3":
             operator_commands(unit)
+        elif choice == "4":
+            save_data(unit)
         else:
             break
     
@@ -53,6 +56,8 @@ def unit_commands(unit):
                
 
 def flight_commands(unit):
+    flight = flight_selection_menu(unit)
+
     menu = """
     Flight commands:
     1. Flight score average
@@ -68,8 +73,34 @@ def flight_commands(unit):
         print(menu)
         choice = input("Input: ")
         if choice == "1":
-            flight = flight_selection_menu(unit)
             print(f"{flight.name.upper()} Flight average: {flight.flight_average()} ")
+        elif choice == "2":
+            print(f"{flight.name.upper()} Flight readiness: {flight.readiness_rate()}")
+        elif choice == "3":
+            flight.readiness_rate()
+            print(f"{flight.name.upper()} Red Operators: {flight.red_operators}") 
+        elif choice == "4":
+            print("Operator Creation: ")
+            name = input("Name: ")
+            rank = input("Rank: ")
+            operator = Operator(name, rank)
+
+            flight.add_operator(operator)
+            print(f"{operator.name.upper()} added to {flight.name.upper()} Flight")
+        elif choice == "5":
+            name = input("Name of Operator: ")
+            flight.remove_operator(name.lower())
+            print("Operator is removed.")
+        elif choice == "6":
+            print("Please choose transfer flight. ")
+            trans_flight = flight_selection_menu(unit)
+            name = input("Name of Operator: ")
+            flight.transfer_operator(name.lower(), trans_flight)
+            print(f"{name.upper()} transferred to {trans_flight.name.upper()} Flight")
+        else:
+            return
+
+
             
 
 def flight_selection_menu(unit):
@@ -80,16 +111,90 @@ def flight_selection_menu(unit):
     return unit.get_flight(choice.lower())
     
 def operator_commands(unit):
+    flight = flight_selection_menu(unit)
+    name = input("Name of Operator: ")
+    operator = flight.get_operator(name)
+
+
     menu = """
     Operator commands coming soon
-    1. Main Menu
+    1. View operator profile
+    2. Green light operator (set ready)
+    3. Red light operator (set not ready)
+    4. Record Test
+    5. View Test Scores
+    6. Main Menu
     """   
 
     while True:
         print(menu)
         choice = input("Input: ")
         if choice == "1":
+            print(operator.to_dict())
+        elif choice == "2":
+            operator.dnic = False
+            operator.pt_clear = True
+            print("Status: Green")
+        elif choice == "3":
+            print("Please answer True or False questions below .")
+            dnic = input("Has operator been DNIC? T/F: ")
+            pt_clear = input("Has operator been cleared by Physical Therapist? T/F: ")
+            test = input("Has operator passed their PT Test? T/F: ")
+
+            if (dnic.lower() == "t" or dnic.lower() == "true"):
+                operator.dnic = True
+            if (pt_clear.lower() == "f" or pt_clear.lower() == "false"):
+                operator.pt_clear = False
+            if (test.lower() == "f" or test.lower() == "false"):
+                operator.test_passed = False 
+        elif choice == "4":
+            print("Please Provide Test Scores Below")
+            score_dict = {
+            "ruck": {"pass_fail": None, "time": 0.0, "score": 0},
+            "long_jump": {"pass_fail": None, "distance": 0, "score": 0},
+            "agility_right": {"pass_fail": None, "time": 0.0, "score": 0},
+            "agility_left": {"pass_fail": None, "time": 0.0, "score": 0},
+            "deadlift": {"pass_fail": None, "weight": 0, "score": 0},
+            "pull_ups": {"pass_fail": None, "reps": 0, "score": 0},
+            "carry": {"pass_fail": None, "time": 0.0, "score": 0},
+            "shuttle": {"pass_fail": None, "time": 0.0, "score": 0},
+            "cardio": {"pass_fail": None, "time": 0.0, "score": 0},
+            }
+
+            cardio_choice = None
+            for key in score_dict:
+                print(f"Test {key.upper()}")
+                time_values = {"ruck", "agility_right", "agility_left", "carry", "shuttle"}
+                if key in time_values:
+                    score = input("Time in seconds: ")
+                    score_dict[key]["time"] = float(score)
+                elif key == "long_jump":
+                    score = input("Length in inches: ")
+                    score_dict[key]["distance"] = int(score)
+                elif key == "deadlift":
+                    score = input("Weight in lbs: ")
+                    score_dict[key]["weight"] = int(score)
+                elif key == "pull_ups":
+                    score = input("Number of reps: ")
+                    score_dict[key]["reps"] = int(score)    
+                elif key == "cardio":
+                    cardio_choice = input("Run or Swim? ")
+                    score = input("Time in seconds: ")
+                    score_dict[key]["time"] = float(score)
+
+
+            print("Recording Test.....")
+            operator.record_test(score_dict, cardio_choice)      
+            print("Test Recorded")             
+
+        elif choice == "5":
+            for event, score in operator.scores.items():
+                print(event, score)
+        elif choice == "6":
             return
+
+
+
 
 def main():
     unit = load_data()
