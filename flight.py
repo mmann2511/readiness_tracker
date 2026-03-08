@@ -2,13 +2,16 @@
 
 class Flight():
 
-    def __init__(self, name):
+    def __init__(self, name, unit = None):
         self.name = name
         self.roster = {}
         self.red_operators = {}
+        self.unit = unit
 
 
     def add_operator(self, operator):
+        operator.flight = self.name
+        operator.unit = self.unit
         self.roster[operator.name] = operator
 
 

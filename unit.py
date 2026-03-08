@@ -7,6 +7,7 @@ class Unit():
     
 
     def add_flight(self, flight):
+        flight.unit = self.name
         self.flights[flight.name] = flight
 
     
