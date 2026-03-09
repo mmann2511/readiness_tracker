@@ -3,7 +3,7 @@
 class Flight():
 
     def __init__(self, name, unit = None):
-        self.name = name
+        self.name = name.lower()
         self.roster = {}
         self.red_operators = {}
         self.unit = unit

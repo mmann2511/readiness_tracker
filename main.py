@@ -24,6 +24,8 @@ def main_menu(unit):
             operator_commands(unit)
         elif choice == "4":
             save_data(unit)
+            print("Data saved. Goodbye!")
+            break
         else:
             break
     
@@ -34,7 +36,8 @@ def unit_commands(unit):
     2. Unit Readiness
     3. Flight Information
     4. Add Flight
-    5. Main Menu
+    5. Unit Info
+    6. Main Menu
     """   
 
     while True:
@@ -45,12 +48,18 @@ def unit_commands(unit):
         elif choice == "2":
             print(f"Unit Readiness: {unit.unit_readiness()}")
         elif choice == "3":
-            flight_commands(unit)
+            if not unit.flights:
+                print("No flights in unit")
+                print("Add Flights")
+            else:
+                flight_commands(unit)    
         elif choice == "4":
             name = input("What is the name of the flight? ")
             flight = Flight(name)
             unit.add_flight(flight)
             print("Flight Added")
+        elif choice == "5":
+            print(unit.to_dict())
         else:
             return
                
@@ -73,12 +82,12 @@ def flight_commands(unit):
         print(menu)
         choice = input("Input: ")
         if choice == "1":
-            print(f"{flight.name.upper()} Flight average: {flight.flight_average()} ")
+            print(f"{flight.name.title()} Flight average: {flight.flight_average()} ")
         elif choice == "2":
-            print(f"{flight.name.upper()} Flight readiness: {flight.readiness_rate()}")
+            print(f"{flight.name.title()} Flight readiness: {flight.readiness_rate()}")
         elif choice == "3":
             flight.readiness_rate()
-            print(f"{flight.name.upper()} Red Operators: {flight.red_operators}") 
+            print(f"{flight.name.title()} Red Operators: {flight.red_operators}") 
         elif choice == "4":
             print("Operator Creation: ")
             name = input("Name: ")
@@ -104,10 +113,11 @@ def flight_commands(unit):
             
 
 def flight_selection_menu(unit):
-    print("Flights: ")
+    print("Flights")
+    print("------------")
     for name in unit.flights.keys():
-        print(f"{name.upper()} Flight")
-    choice = input("Flight: ")
+        print(name.title())
+    choice = input("\nSelect Flight: ")
     return unit.get_flight(choice.lower())
     
 def operator_commands(unit):
@@ -117,20 +127,21 @@ def operator_commands(unit):
 
 
     menu = """
-    Operator commands coming soon
-    1. View operator profile
-    2. Green light operator (set ready)
-    3. Red light operator (set not ready)
-    4. Record Test
-    5. View Test Scores
-    6. Main Menu
-    """   
+Operator commands
+------------------------------
+1. View operator profile
+2. Green light operator (set ready)
+3. Red light operator (set not ready)
+4. Record Test
+5. View Test Scores
+6. Main Menu
+"""   
 
     while True:
         print(menu)
         choice = input("Input: ")
         if choice == "1":
-            print(operator.to_dict())
+            print(operator)
         elif choice == "2":
             operator.dnic = False
             operator.pt_clear = True
@@ -163,7 +174,7 @@ def operator_commands(unit):
 
             cardio_choice = None
             for key in score_dict:
-                print(f"Test {key.upper()}")
+                print(f"Test {key.title()}")
                 time_values = {"ruck", "agility_right", "agility_left", "carry", "shuttle"}
                 if key in time_values:
                     score = input("Time in seconds: ")

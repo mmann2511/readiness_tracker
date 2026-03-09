@@ -2,14 +2,13 @@ from scoring_tables import ScoringTables
 
 class Operator():
 
-    def __init__(self, name, rank, unit, flight = None, dnic = False, pt_clear = False, training = True):
-        self.name = name
-        self.rank = rank
+    def __init__(self, name, rank, unit = None, flight = None, dnic = False, pt_clear = False):
+        self.name = name.lower()
+        self.rank = rank.lower()
         self.unit = unit
         self.flight = flight
         self.dnic = dnic
         self.pt_clear = pt_clear
-        self.training = training
 
         # PFT attributes
         self.taken = False
@@ -35,34 +34,36 @@ class Operator():
 
     def __str__(self):
         return f"""
-        Name: {self.name}
-        Rank: {self.rank}
-        Unit: {self.unit}
-        Flight: {self.flight}
-        Medical Status: {'GREEN' if self.is_ready() else 'RED'}
-        PFT: {'PASS' if self.test_passed else 'FAIL'}
-        """
+    Name: {self.name.title()}
+    Rank: {self.rank.title()}
+    Unit: {self.unit}
+    Flight: {self.flight.title()}
+    Medical Status: {'GREEN' if self.is_ready() else 'RED'}
+    PFT: {'PASS' if self.test_passed else 'FAIL'}
+    """
     
     def record_test(self, scores: dict, cardio_choice: str):
         self.taken = True
         self.last_cardio_choice = cardio_choice
 
-        for key, value in scores.items():
+        for event, event_data in scores.items():
             
-            for innerKey, innerValue in value.items():
-                score = self.get_score(key, innerValue)
+            for event_data_key, event_data_value in event_data.items():
+                if event_data_key == "pass_fail" or  event_data_key == "score":
+                    continue
+                score = self.get_score(event, event_data_value)
 
-                self.scores[key]['score'] = score
-                self.scores[key][innerKey] = innerValue
-                self.scores[key]["pass_fail"] = 'PASS' if score else 'FAIL'
+                self.scores[event]['score'] = score
+                self.scores[event][event_data_key] = event_data_value
+                self.scores[event]["pass_fail"] = 'PASS' if score else 'FAIL'
 
+
+        self.test_passed = True
         for key, value in self.scores.items():
             if value['score']:
                 self.total_score += value['score']
 
-        self.test_passed = True
-        for key, value in self.scores.items():
-            if value['pass_fail']== 'FAIL':
+            if value['pass_fail'] == 'FAIL':
                 self.test_passed = False
 
                      
@@ -72,8 +73,11 @@ class Operator():
 
     ## Helper Method ##
     def get_score(self, event, raw_value):
+        if event == "cardio":
+            event = self.last_cardio_choice
 
-        table = getattr(ScoringTables, event)
+        table = getattr(ScoringTables, event.lower())
+        
 
         for range_tuple, points in table.items():
             # single value "this value or higher"

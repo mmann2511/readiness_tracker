@@ -5,7 +5,7 @@ from sw_operator import Operator
 
 def save_data(unit):
     with open("readiness_data.json", "w") as file:
-        json.dump(unit.to_dict(), file)
+        json.dump(unit.to_dict(), file, indent=4)
 
 
 def load_data():
@@ -26,7 +26,6 @@ def load_data():
                         operator_data['flight'],
                         operator_data['dnic'],
                         operator_data['pt_clear'],
-                        operator_data['training'],
                     )
 
                     operator.taken = operator_data['taken']
