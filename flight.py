@@ -36,7 +36,7 @@ class Flight():
     
     def flight_average(self):
         if len(self.roster) == 0:
-            return None    
+            return 0    
         
         result = 0
         for name, operator in self.roster.items():

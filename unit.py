@@ -55,16 +55,3 @@ class Unit():
             "flights": unit_dict
         }    
     
-
-if __name__ == "__main__":
-    unit = Unit("7th ASOS")
-    print(unit.get_flight("Alpha"))
-    alpha = Flight("Alpha")
-    bravo = Flight("Bravo")
-    charlie = Flight("Charlie")
-    unit.add_flight(alpha)
-    unit.add_flight(bravo)
-    unit.add_flight(charlie)
-    print(unit.get_flight("Alpha"))
-    print(alpha.unit)
-    print(alpha.to_dict)

@@ -6,12 +6,13 @@ from sw_operator import Operator
 def main_menu(unit):
 
     menu = """
-    MAIN MENU
-    1. Unit commands
-    2. Flight commands
-    3. Operator commands
-    4. Save and exit
-    """
+MAIN MENU
+-----------------
+1. Unit commands
+2. Flight commands
+3. Operator commands
+4. Save and exit
+"""
     
     while True:
         print(menu)
@@ -31,22 +32,23 @@ def main_menu(unit):
     
 def unit_commands(unit):
     menu = """
-    Unit commands:
-    1. Unit Average Test Score
-    2. Unit Readiness
-    3. Flight Information
-    4. Add Flight
-    5. Unit Info
-    6. Main Menu
+Unit commands
+-----------------------
+1. Unit Average Test Score
+2. Unit Readiness
+3. Flight Information
+4. Add Flight
+5. Unit Info
+6. Main Menu
     """   
 
     while True:
         print(menu)
         choice = input("Input: ")
         if choice == "1":
-            print(f"Unit Average: {unit.unit_average()}")
+            print(f"Unit Average: {unit.unit_average():.2f}")
         elif choice == "2":
-            print(f"Unit Readiness: {unit.unit_readiness()}")
+            print(f"Unit Readiness: {unit.unit_readiness():.2f}")
         elif choice == "3":
             if not unit.flights:
                 print("No flights in unit")
@@ -68,14 +70,15 @@ def flight_commands(unit):
     flight = flight_selection_menu(unit)
 
     menu = """
-    Flight commands:
-    1. Flight score average
-    2. Flight readiness 
-    3. View Red Operators
-    4. Add Operator
-    5. Remove Operator
-    6. Transfer Operator
-    7. Back to Main Menu
+Flight commands
+--------------------
+1. Flight score average
+2. Flight readiness 
+3. View Red Operators
+4. Add Operator
+5. Remove Operator
+6. Transfer Operator
+7. Back to Main Menu
     """   
 
     while True:
@@ -123,7 +126,7 @@ def flight_selection_menu(unit):
 def operator_commands(unit):
     flight = flight_selection_menu(unit)
     name = input("Name of Operator: ")
-    operator = flight.get_operator(name)
+    operator = flight.get_operator(name.lower())
 
 
     menu = """
